@@ -24,7 +24,7 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['freddiet803', 'anatulea', 'cesarhj19', 'jalvarez2020'];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -46,6 +46,50 @@ const followersArray = [];
 
 */
 
+function CreateCard({name, avatar_url, login, location, html_url, followers, following, bio}) {
+  const card = document.createElement('div');
+  const image = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const givenName = document.createElement('h3');
+  const username = document.createElement('p');
+  const userLocation = document.createElement('p');
+  const profile = document.createElement('p');
+  const link = document.createElement('a');
+  const userFollowers = document.createElement('p');
+  const userFollowing = document.createElement('p');
+  const userBio = document.createElement('p');
+
+  givenName.textcontent = name;
+  image.src = avatar_url;
+  username.textContent = login;
+  userLocation.textContent = `Location: ${location}`;
+  profile.textContent = 'Profile:'
+  link.href = html_url;
+  link.textContent = html_url;
+  userFollowers.textContent = `Followers ${followers}`;
+  userFollowing.textContent = `Following: ${following}`;
+  userBio.textContent = bio;
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  givenName.classList.add('name');
+  username.classList.add('username');
+
+  card.appendChild(image);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(givenName);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(userLocation);
+  cardInfo.appendChild(profile);
+  profile.appendChild(link);
+  cardInfo.appendChild(userFollowers);
+  cardInfo.appendChild(userFollowing);
+  cardInfo.appendChild(userBio);
+  return card;
+}
+
+const cards = document.querySelector('.cards')
+
 /* List of LS Instructors Github username's: 
   tetondan
   dustinmyers
@@ -53,3 +97,20 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+axios.get('https://api.github.com/users/JesseBentley')
+  .then((results) => {
+    const dataObj = results.data;
+    const createCard = CreateCard(dataObj);
+    cards.appendChild(createCard);
+  })
+  .then(() => {
+    return axios.get('https://api.github.com/users/JesseBentley/followers');
+  })
+  .then((result) => {
+      const dataObj = result.data;
+      dataObj.forEach((item) => {
+        const createCard = CreateCard(item);
+        cards.appendChild(createCard);
+      });
+  });
